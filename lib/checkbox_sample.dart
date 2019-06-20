@@ -10,10 +10,14 @@ class CheckBoxBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final FavoriteBloc bloc = BlocProvider.of<FavoriteBloc>(context);
     return StreamBuilder(
-      stream: bloc.outUpdateBody,
-      initialData: true,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+      stream: bloc.outUpdateBody.where((UpdateHeaderItem value) {
+        return value.itemId == panelItem.itemId;
+      }),
+      initialData: UpdateHeaderItem(),
+      builder:
+          (BuildContext context, AsyncSnapshot<UpdateHeaderItem> snapshot) {
         if (snapshot.hasData) {
+          print("In CheckBoxBody ${panelItem.expandedValue}");
           var mappedWidgets =
               panelItem.subItems.map<Widget>((ExpansionPanelSubItem subItem) {
             return CheckboxListTile(
@@ -22,17 +26,20 @@ class CheckBoxBody extends StatelessWidget {
                 final FavoriteBloc bloc =
                     BlocProvider.of<FavoriteBloc>(context);
                 subItem.isSubSelected = value;
-                bloc.updateBody(true);
+                bloc.updateBody(true, panelItem.itemId);
+
                 // -------------
                 var allSelectedSubItems = panelItem.subItems
                     .where((subItem) => subItem.isSubSelected == true);
                 // -------------
                 if (allSelectedSubItems.length == panelItem.subItems.length) {
                   panelItem.isHeaderSelected = true;
-                  bloc.updateHeader(true);
+                  bloc.updateHeader(
+                      panelItem.isHeaderSelected, panelItem.itemId);
                 } else {
                   panelItem.isHeaderSelected = false;
-                  bloc.updateHeader(false);
+                  bloc.updateHeader(
+                      panelItem.isHeaderSelected, panelItem.itemId);
                 }
               },
               title: Text(subItem.subTitle),
@@ -63,10 +70,15 @@ class CheckBoxHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final FavoriteBloc bloc = BlocProvider.of<FavoriteBloc>(context);
     return StreamBuilder(
-      stream: bloc.outUpdateHeader,
-      initialData: panelItem.isHeaderSelected,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+      stream: bloc.outUpdateHeader.where((UpdateHeaderItem value) {
+        return value.itemId == panelItem.itemId;
+      }),
+      initialData: UpdateHeaderItem(),
+      builder:
+          (BuildContext context, AsyncSnapshot<UpdateHeaderItem> snapshot) {
         if (snapshot.hasData) {
+          //if (snapshot.data.itemId == panelItem.itemId) {}
+          print("In CheckBoxHeader ${panelItem.expandedValue}");
           return CheckboxListTile(
             value: panelItem.isHeaderSelected,
             onChanged: (bool value) {
@@ -74,8 +86,11 @@ class CheckBoxHeader extends StatelessWidget {
                 subItem.isSubSelected = value;
               });
               panelItem.isHeaderSelected = value;
-              bloc.updateHeader(panelItem.isHeaderSelected);
-              bloc.updateBody(panelItem.isHeaderSelected);
+
+              // -----
+              bloc.updateHeader(panelItem.isHeaderSelected, panelItem.itemId);
+              bloc.updateBody(panelItem.isHeaderSelected, panelItem.itemId);
+              // -----
             },
             title: Text('Header ${panelItem.expandedValue}'),
             controlAffinity: ListTileControlAffinity.leading,

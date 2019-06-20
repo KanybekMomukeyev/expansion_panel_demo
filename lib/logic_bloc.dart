@@ -6,14 +6,26 @@ abstract class BlocBase {
   void dispose();
 }
 
-class FavoriteBloc implements BlocBase {
-  BehaviorSubject<bool> _headerUpdateController = BehaviorSubject<bool>();
-  Sink<bool> get inUpdateHeader => _headerUpdateController.sink;
-  Stream<bool> get outUpdateHeader => _headerUpdateController.stream;
+class UpdateHeaderItem {
+  UpdateHeaderItem({
+    this.itemId = 0,
+    this.value = false,
+  });
+  int itemId;
+  bool value;
+}
 
-  BehaviorSubject<bool> _bodyUpdateController = BehaviorSubject<bool>();
-  Sink<bool> get inUpdateBody => _bodyUpdateController.sink;
-  Stream<bool> get outUpdateBody => _bodyUpdateController.stream;
+class FavoriteBloc implements BlocBase {
+  BehaviorSubject<UpdateHeaderItem> _headerUpdateController =
+      BehaviorSubject<UpdateHeaderItem>();
+  Sink<UpdateHeaderItem> get inUpdateHeader => _headerUpdateController.sink;
+  Stream<UpdateHeaderItem> get outUpdateHeader =>
+      _headerUpdateController.stream;
+
+  BehaviorSubject<UpdateHeaderItem> _bodyUpdateController =
+      BehaviorSubject<UpdateHeaderItem>();
+  Sink<UpdateHeaderItem> get inUpdateBody => _bodyUpdateController.sink;
+  Stream<UpdateHeaderItem> get outUpdateBody => _bodyUpdateController.stream;
 
   FavoriteBloc() {}
 
@@ -22,12 +34,14 @@ class FavoriteBloc implements BlocBase {
     _bodyUpdateController.close();
   }
 
-  void updateHeader(bool shouldSelectHeader) {
-    inUpdateHeader.add(shouldSelectHeader);
+  void updateHeader(bool shouldSelectHeader, int itemId) {
+    inUpdateHeader
+        .add(UpdateHeaderItem(value: shouldSelectHeader, itemId: itemId));
   }
 
-  void updateBody(bool shouldSelectAllBody) {
-    inUpdateBody.add(shouldSelectAllBody);
+  void updateBody(bool shouldSelectAllBody, int itemId) {
+    inUpdateBody
+        .add(UpdateHeaderItem(value: shouldSelectAllBody, itemId: itemId));
   }
 }
 

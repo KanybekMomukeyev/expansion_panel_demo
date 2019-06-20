@@ -3,6 +3,7 @@ import 'dart:math';
 // stores ExpansionPanel state information
 class ExpansionPanelItem {
   ExpansionPanelItem({
+    this.itemId,
     this.expandedValue,
     this.headerValue,
     this.isHeaderExpanded = false,
@@ -10,6 +11,7 @@ class ExpansionPanelItem {
     this.subItems = const <ExpansionPanelSubItem>[],
   });
 
+  int itemId;
   String expandedValue;
   String headerValue;
   bool isHeaderExpanded;
@@ -28,13 +30,15 @@ class ExpansionPanelSubItem {
 }
 
 List<ExpansionPanelItem> generateItems(int numberOfItems) {
-  var rng = Random();
+  //var rng = Random();
+  //rng.nextInt(10)
   return List.generate(numberOfItems, (int index) {
     return ExpansionPanelItem(
+        itemId: (index + 1),
         headerValue: 'Panel $index',
         expandedValue: 'This is item number $index',
         isHeaderExpanded: false,
-        subItems: generateSubItems(rng.nextInt(10)));
+        subItems: generateSubItems(50));
   });
 }
 
