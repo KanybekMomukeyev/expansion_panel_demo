@@ -461,3 +461,156 @@ class DemoItem<T> {
 //   }
 // }
 // // -----
+// class SamplePanelsDemo2 extends StatelessWidget {
+//   List<ExpansionPanelItem> _data = generateItems(10);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Sample panels'),
+//         actions: <Widget>[],
+//       ),
+//       body: SingleChildScrollView(
+//         child: Container(
+//           child: _buildPanel(context),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildPanel(BuildContext context) {
+//     final FavoriteBloc bloc = BlocProvider.of<FavoriteBloc>(context);
+//     return ExpansionPanelList(
+//       expansionCallback: (int index, bool isExpanded) {
+//         print("expansionCallback called ${index} ${isExpanded}");
+//         bloc.updateExpansionList(!isExpanded, _data[index].itemId);
+//         // setState(() {
+//         //   _data[index].isHeaderExpanded = !isExpanded;
+//         // });
+//       },
+//       children: _data.map<ExpansionPanel>((ExpansionPanelItem item) {
+//         print("Rebuild ExpansionPanelList ${item.expandedValue}");
+//         return ExpansionPanel(
+//           headerBuilder: (BuildContext context, bool isExpanded) {
+//             return CheckBoxHeader(item);
+//           },
+//           body: CheckBoxNewBody(item),
+//           isExpanded: item.isHeaderExpanded,
+//         );
+//       }).toList(),
+//     );
+//   }
+// }
+//
+// class CheckBoxBody extends StatelessWidget {
+//   CheckBoxBody(this.panelItem);
+//   ExpansionPanelItem panelItem;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final FavoriteBloc bloc = BlocProvider.of<FavoriteBloc>(context);
+//     return StreamBuilder(
+//       stream: bloc.outUpdateBody.where((UpdateHeaderItem value) {
+//         return value.itemId == panelItem.itemId;
+//       }),
+//       initialData: UpdateHeaderItem(),
+//       builder:
+//           (BuildContext context, AsyncSnapshot<UpdateHeaderItem> snapshot) {
+//         if (snapshot.hasData) {
+//           print("In CheckBoxBody ${panelItem.expandedValue}");
+//           var mappedWidgets =
+//               panelItem.subItems.map<Widget>((ExpansionPanelSubItem subItem) {
+//             return CheckboxListTile(
+//               value: subItem.isSubSelected,
+//               onChanged: (bool value) {
+//                 final FavoriteBloc bloc =
+//                     BlocProvider.of<FavoriteBloc>(context);
+//                 subItem.isSubSelected = value;
+//                 bloc.updateBody(true, panelItem.itemId);
+
+//                 // -------------
+//                 var allSelectedSubItems = panelItem.subItems
+//                     .where((subItem) => subItem.isSubSelected == true);
+//                 // -------------
+//                 if (allSelectedSubItems.length == panelItem.subItems.length) {
+//                   panelItem.isHeaderSelected = true;
+//                   bloc.updateHeader(
+//                       panelItem.isHeaderSelected, panelItem.itemId);
+//                 } else {
+//                   panelItem.isHeaderSelected = false;
+//                   bloc.updateHeader(
+//                       panelItem.isHeaderSelected, panelItem.itemId);
+//                 }
+//               },
+//               title: Text(subItem.subTitle),
+//               controlAffinity: ListTileControlAffinity.leading,
+//               secondary: Icon(Icons.archive),
+//               activeColor: Colors.red,
+//             );
+//           }).toList();
+
+//           return Column(
+//             children: mappedWidgets,
+//           );
+//         }
+//         return Container();
+//       },
+//     );
+//   }
+// }
+
+// // ------------------------------------------------------------------------------------------------
+// // ------------------------------------------------------------------------------------------------
+// // ------------------------------------------------------------------------------------------------
+// // ------------------------------------------------------------------------------------------------
+// BehaviorSubject<UpdateHeaderItem> _updateExpansionList =
+//     BehaviorSubject<UpdateHeaderItem>();
+// Sink<UpdateHeaderItem> get inUpdateExpansionList => _updateExpansionList.sink;
+// Stream<UpdateHeaderItem> get outUpdateExpansionList =>
+//     _updateExpansionList.stream;
+// void updateExpansionList(bool shouldSelectAllBody, int itemId) {
+//   inUpdateBody
+//       .add(UpdateHeaderItem(value: shouldSelectAllBody, itemId: itemId));
+// }
+
+// class CheckBoxNewBody extends StatefulWidget {
+//   CheckBoxNewBody(this.panelSubItem);
+//   ExpansionPanelSubItem panelSubItem;
+
+//   @override
+//   _CheckBoxNewBodyState createState() => _CheckBoxNewBodyState();
+// }
+
+// class _CheckBoxNewBodyState extends State<CheckBoxNewBody> {
+//   @override
+//   Widget build(BuildContext context) {
+//     final FavoriteBloc bloc = BlocProvider.of<FavoriteBloc>(context);
+//     return CheckboxListTile(
+//       value: widget.panelSubItem.isSubSelected,
+//       onChanged: (bool value) {
+//         setState(() {
+//           widget.panelSubItem.isSubSelected = value;
+//         });
+//       },
+//       title: Text('Header ${widget.panelSubItem.subTitle}'),
+//       controlAffinity: ListTileControlAffinity.leading,
+//       secondary: Icon(Icons.stars),
+//       activeColor: Colors.blue,
+//     );
+//   }
+// }
+
+// return StreamBuilder(
+//   stream: bloc.outUpdateExpansionList.where((UpdateHeaderItem value) {
+//     return value.itemId == item.itemId;
+//   }),
+//   initialData: UpdateHeaderItem(),
+//   builder:
+//       (BuildContext context, AsyncSnapshot<UpdateHeaderItem> snapshot) {
+//     if (snapshot.hasData) {
+//       return Container();
+//     }
+//     return Container();
+//   },
+// );

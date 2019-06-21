@@ -24,7 +24,6 @@ class ExpansionPanelSubItem {
     this.subTitle,
     this.isSubSelected = false,
   });
-
   String subTitle;
   bool isSubSelected;
 }
@@ -38,7 +37,7 @@ List<ExpansionPanelItem> generateItems(int numberOfItems) {
         headerValue: 'Panel $index',
         expandedValue: 'This is item number $index',
         isHeaderExpanded: false,
-        subItems: generateSubItems(50));
+        subItems: generateSubItems(10));
   });
 }
 
